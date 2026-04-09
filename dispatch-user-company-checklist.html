@@ -118,6 +118,7 @@
               <th style="width:180px;">주요 위반 포인트</th>
               <th style="width:120px;">법령 근거</th>
               <th style="width:170px;">벌칙·과태료 조항</th>
+              <th style="width:190px;">형벌종류·금액(상한)</th>
               <th style="width:190px;">확인 증빙</th>
               <th style="width:120px;">점검 상태</th>
               <th style="width:180px;">조치 메모</th>
@@ -138,18 +139,18 @@
     const STORAGE_KEY = "dispatch_user_company_checklist_v1";
 
     const rows = [
-      { title: "불법파견·위장도급 여부", risk: "high", point: "도급계약 명목이나 실질 지휘명령", law: "파견법·판례", penalty: "파견법 제43조·제46조", evidence: "업무지시체계, 출퇴근통제" },
-      { title: "파견대상·금지업무 준수", risk: "high", point: "허용업무 외/금지업무 사용", law: "파견법 제5조", penalty: "파견법 제43조·제46조", evidence: "직무기술서, 공정표" },
-      { title: "동일근로자 파견기간 2년 초과", risk: "high", point: "기간관리 실패로 직접고용의무 발생", law: "파견법 제6조", penalty: "파견법 제43조·제46조", evidence: "투입이력, 근무표" },
-      { title: "직접고용의무 이행", risk: "high", point: "의무 발생 후 고용 미이행", law: "파견법 제6조의2", penalty: "파견법 제46조", evidence: "고용통지, 계약서" },
-      { title: "파견근로자 차별금지", risk: "high", point: "동종업무 대비 임금·복리후생 차별", law: "파견법 차별금지", penalty: "파견법 제46조", evidence: "임금비교표, 규정" },
-      { title: "연장·야간·휴일근로 운영", risk: "high", point: "실근로시간 관리 미흡, 가산수당 누락", law: "근로기준법 제56조", penalty: "근기법 제109조", evidence: "근태기록, 급여명세" },
-      { title: "휴게·휴일 부여", risk: "medium", point: "휴게시간 미부여·형식운영", law: "근로기준법 제54조", penalty: "근기법 제110조", evidence: "근무표, 현장기록" },
-      { title: "산업안전보건 책임 이행", risk: "high", point: "위험성평가/교육/보호구 미흡", law: "산안법", penalty: "산안법 제167조~제175조", evidence: "교육일지, 점검표" },
-      { title: "성희롱·괴롭힘 대응 체계", risk: "medium", point: "신고접수·조사·보호조치 미흡", law: "근기법·남녀고용법", penalty: "근기법·남녀고용법 제재", evidence: "규정, 조사문서" },
-      { title: "파견근로자 개인정보 관리", risk: "medium", point: "명부·서류 과다수집/보안 미흡", law: "개인정보보호법", penalty: "개인정보보호법 벌칙·과태료", evidence: "접근권한, 보관정책" },
-      { title: "원·하청(파견사) 책임분담 명확화", risk: "medium", point: "계약상 책임·연락체계 불명확", law: "파견계약 관련", penalty: "파견법 제46조(연계위반)", evidence: "계약서, 협의록" },
-      { title: "사용사업주 교육·관리자 인식", risk: "low", point: "불법파견 리스크 교육 미실시", law: "내부통제", penalty: "직접 벌칙 없음(내부통제)", evidence: "교육자료, 참석부" }
+      { title: "불법파견·위장도급 여부", risk: "high", point: "도급계약 명목이나 실질 지휘명령", law: "파견법·판례", penalty: "파견법 제43조·제46조", sanction: "징역 3년 이하 또는 벌금 3천만원 이하(사실관계별 적용)", evidence: "업무지시체계, 출퇴근통제" },
+      { title: "파견대상·금지업무 준수", risk: "high", point: "허용업무 외/금지업무 사용", law: "파견법 제5조", penalty: "파견법 제43조·제46조", sanction: "징역 3년 이하 또는 벌금 3천만원 이하", evidence: "직무기술서, 공정표" },
+      { title: "동일근로자 파견기간 2년 초과", risk: "high", point: "기간관리 실패로 직접고용의무 발생", law: "파견법 제6조", penalty: "파견법 제43조·제46조", sanction: "징역 3년 이하 또는 벌금 3천만원 이하", evidence: "투입이력, 근무표" },
+      { title: "직접고용의무 이행", risk: "high", point: "의무 발생 후 고용 미이행", law: "파견법 제6조의2", penalty: "파견법 제46조", sanction: "과태료(행위별 상이, 시행령 별표 기준)", evidence: "고용통지, 계약서" },
+      { title: "파견근로자 차별금지", risk: "high", point: "동종업무 대비 임금·복리후생 차별", law: "파견법 차별금지", penalty: "파견법 제46조", sanction: "과태료(행위별 상이)", evidence: "임금비교표, 규정" },
+      { title: "연장·야간·휴일근로 운영", risk: "high", point: "실근로시간 관리 미흡, 가산수당 누락", law: "근로기준법 제56조", penalty: "근기법 제109조", sanction: "징역 3년 이하 또는 벌금 3천만원 이하", evidence: "근태기록, 급여명세" },
+      { title: "휴게·휴일 부여", risk: "medium", point: "휴게시간 미부여·형식운영", law: "근로기준법 제54조", penalty: "근기법 제110조", sanction: "징역 2년 이하 또는 벌금 2천만원 이하", evidence: "근무표, 현장기록" },
+      { title: "산업안전보건 책임 이행", risk: "high", point: "위험성평가/교육/보호구 미흡", law: "산안법", penalty: "산안법 제167조~제175조", sanction: "최대 징역 7년 또는 벌금 1억원 / 과태료 최대 5천만원", evidence: "교육일지, 점검표" },
+      { title: "성희롱·괴롭힘 대응 체계", risk: "medium", point: "신고접수·조사·보호조치 미흡", law: "근기법·남녀고용법", penalty: "근기법·남녀고용법 제재", sanction: "법률별 상이(과태료·벌금 중심)", evidence: "규정, 조사문서" },
+      { title: "파견근로자 개인정보 관리", risk: "medium", point: "명부·서류 과다수집/보안 미흡", law: "개인정보보호법", penalty: "개인정보보호법 벌칙·과태료", sanction: "최대 징역 5년 또는 벌금 5천만원(유형별 상이)", evidence: "접근권한, 보관정책" },
+      { title: "원·하청(파견사) 책임분담 명확화", risk: "medium", point: "계약상 책임·연락체계 불명확", law: "파견계약 관련", penalty: "파견법 제46조(연계위반)", sanction: "과태료(행위별 상이)", evidence: "계약서, 협의록" },
+      { title: "사용사업주 교육·관리자 인식", risk: "low", point: "불법파견 리스크 교육 미실시", law: "내부통제", penalty: "직접 벌칙 없음(내부통제)", sanction: "직접 법정형 없음", evidence: "교육자료, 참석부" }
     ];
 
     const bodyEl = document.getElementById("body");
@@ -205,6 +206,7 @@
           <td>${r.point}</td>
           <td>${r.law}</td>
           <td>${r.penalty}</td>
+          <td>${r.sanction}</td>
           <td>${r.evidence}</td>
           <td>
             <select data-i="${i}" class="status">
