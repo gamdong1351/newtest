@@ -1,0 +1,592 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>감독 협업 실시간 공유 페이지</title>
+  <style>
+    :root {
+      --bg1: #f7fbff;
+      --bg2: #ecf4ff;
+      --panel: #ffffff;
+      --line: #d6e1ef;
+      --text: #1f2937;
+      --sub: #5f6b7a;
+      --primary: #0a56d6;
+      --primary2: #2a89ff;
+      --soft: #e9f0ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      background: linear-gradient(140deg, var(--bg1), var(--bg2));
+      padding: 20px;
+    }
+
+    .back-wrap {
+      width: min(1200px, 100%);
+      margin: 0 auto 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0a4fc4;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .wrap {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid #e6edf7;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
+      overflow: hidden;
+    }
+
+    .head {
+      padding: 22px;
+      color: #fff;
+      background: linear-gradient(120deg, var(--primary), var(--primary2));
+    }
+
+    .head h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    .head p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      opacity: 0.96;
+    }
+
+    .main {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      border: 1px solid #e8edf5;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      display: grid;
+      gap: 12px;
+      min-height: 620px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1.03rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field.wide {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: #fff;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 78px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(10, 86, 214, 0.14);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      width: auto;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .btn.soft {
+      color: #29446b;
+      background: var(--soft);
+      border: 1px solid #c7d8fb;
+    }
+
+    .hint {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--sub);
+      line-height: 1.45;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+      max-height: 330px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .item {
+      border: 1px solid #e4eaf5;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fbfdff;
+      display: grid;
+      gap: 7px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .item-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0d3f95;
+      margin: 0;
+    }
+
+    .meta {
+      font-size: 0.8rem;
+      color: var(--sub);
+      line-height: 1.35;
+    }
+
+    .status {
+      width: auto;
+      min-width: 108px;
+      font-size: 0.84rem;
+      padding: 5px 8px;
+    }
+
+    .chat-wrap {
+      border: 1px solid #e5ecf8;
+      border-radius: 10px;
+      padding: 8px;
+      background: #fcfdff;
+      display: grid;
+      gap: 8px;
+      grid-template-rows: 1fr auto;
+      min-height: 470px;
+    }
+
+    .chat-log {
+      overflow: auto;
+      max-height: 420px;
+      display: grid;
+      gap: 7px;
+      padding-right: 2px;
+    }
+
+    .msg {
+      border: 1px solid #e5ecf7;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+
+    .msg-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.76rem;
+      color: var(--sub);
+      margin-bottom: 3px;
+    }
+
+    .msg-body {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .small {
+      font-size: 0.81rem;
+      color: var(--sub);
+      line-height: 1.45;
+    }
+
+    @media (max-width: 940px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        min-height: auto;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="back-wrap">
+    <a class="back-btn" href="index.html">메인으로 돌아가기</a>
+  </div>
+
+  <main class="wrap">
+    <section class="head">
+      <h1>감독 협업 실시간 공유 페이지</h1>
+      <p>상대업체 제출자료를 등록/상태관리하고, 실시간 대화로 검토 진행상황을 공유할 수 있습니다.</p>
+    </section>
+
+    <section class="main">
+      <section class="panel">
+        <h2>자료 공유 보드</h2>
+
+        <div class="grid">
+          <div class="field">
+            <label for="reviewerName">내 이름</label>
+            <input id="reviewerName" type="text" value="감독자A" />
+          </div>
+          <div class="field">
+            <label for="companyName">제출 업체명</label>
+            <input id="companyName" type="text" placeholder="예: OO건설" />
+          </div>
+          <div class="field">
+            <label for="docTitle">자료명</label>
+            <input id="docTitle" type="text" placeholder="예: 임금대장 2026-03" />
+          </div>
+          <div class="field">
+            <label for="docType">자료 유형</label>
+            <select id="docType">
+              <option value="임금자료">임금자료</option>
+              <option value="근로시간자료">근로시간자료</option>
+              <option value="계약/규정">계약/규정</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="docDate">제출일</label>
+            <input id="docDate" type="date" />
+          </div>
+          <div class="field">
+            <label for="docLink">자료 링크(선택)</label>
+            <input id="docLink" type="url" placeholder="https://..." />
+          </div>
+          <div class="field wide">
+            <label for="docNote">자료 메모</label>
+            <textarea id="docNote" placeholder="핵심 내용/요청사항을 입력하세요."></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn primary" id="addDocBtn" type="button">자료 등록</button>
+          <button class="btn soft" id="clearDocsBtn" type="button">자료 목록 초기화</button>
+        </div>
+
+        <p class="hint">상태를 `검토대기/검토중/보완요청/검토완료`로 변경하면 같은 페이지를 연 다른 탭에 즉시 반영됩니다.</p>
+
+        <div class="list" id="docList"></div>
+      </section>
+
+      <section class="panel">
+        <h2>실시간 대화창</h2>
+
+        <div class="chat-wrap">
+          <div class="chat-log" id="chatLog"></div>
+
+          <div class="grid">
+            <div class="field wide">
+              <label for="chatInput">메시지</label>
+              <textarea id="chatInput" placeholder="자료 검토 의견이나 요청사항을 입력하세요."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn primary" id="sendMsgBtn" type="button">메시지 보내기</button>
+          <button class="btn soft" id="clearChatBtn" type="button">대화 초기화</button>
+        </div>
+
+        <p class="small">실시간 동기화 범위: 동일 브라우저/동일 도메인 탭. 다른 PC까지 확장하려면 WebSocket/Firebase/Supabase 백엔드 연결이 필요합니다.</p>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "supervision_live_room_v1";
+    const CHANNEL_NAME = "supervision-live-room";
+
+    const channel = "BroadcastChannel" in window ? new BroadcastChannel(CHANNEL_NAME) : null;
+
+    const defaultState = {
+      docs: [],
+      chats: []
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(defaultState);
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          docs: Array.isArray(parsed.docs) ? parsed.docs : [],
+          chats: Array.isArray(parsed.chats) ? parsed.chats : []
+        };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    let state = loadState();
+
+    const reviewerNameEl = document.getElementById("reviewerName");
+    const companyNameEl = document.getElementById("companyName");
+    const docTitleEl = document.getElementById("docTitle");
+    const docTypeEl = document.getElementById("docType");
+    const docDateEl = document.getElementById("docDate");
+    const docLinkEl = document.getElementById("docLink");
+    const docNoteEl = document.getElementById("docNote");
+    const docListEl = document.getElementById("docList");
+
+    const chatInputEl = document.getElementById("chatInput");
+    const chatLogEl = document.getElementById("chatLog");
+
+    const now = new Date();
+    docDateEl.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+    function saveState(broadcast = true) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (broadcast && channel) {
+        channel.postMessage({ type: "state_sync", payload: state });
+      }
+    }
+
+    function dateTimeText(iso) {
+      const d = new Date(iso);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function renderDocs() {
+      if (!state.docs.length) {
+        docListEl.innerHTML = `<div class="small">등록된 자료가 없습니다.</div>`;
+        return;
+      }
+
+      docListEl.innerHTML = state.docs
+        .slice()
+        .reverse()
+        .map((doc) => {
+          const safeLink = doc.link ? escapeHtml(doc.link) : "";
+          const safeNote = escapeHtml(doc.note || "-");
+          return `
+            <article class="item">
+              <div class="item-top">
+                <p class="item-title">[${escapeHtml(doc.company)}] ${escapeHtml(doc.title)}</p>
+                <select class="status" data-doc-id="${doc.id}">
+                  <option value="검토대기" ${doc.status === "검토대기" ? "selected" : ""}>검토대기</option>
+                  <option value="검토중" ${doc.status === "검토중" ? "selected" : ""}>검토중</option>
+                  <option value="보완요청" ${doc.status === "보완요청" ? "selected" : ""}>보완요청</option>
+                  <option value="검토완료" ${doc.status === "검토완료" ? "selected" : ""}>검토완료</option>
+                </select>
+              </div>
+              <div class="meta">유형: ${escapeHtml(doc.type)} | 제출일: ${escapeHtml(doc.docDate)} | 등록자: ${escapeHtml(doc.author)}</div>
+              <div class="meta">메모: ${safeNote}</div>
+              <div class="meta">링크: ${safeLink ? `<a href="${safeLink}" target="_blank" rel="noopener noreferrer">열기</a>` : "-"}</div>
+              <div class="meta">등록시각: ${dateTimeText(doc.createdAt)}</div>
+            </article>
+          `;
+        })
+        .join("");
+
+      docListEl.querySelectorAll(".status").forEach((el) => {
+        el.addEventListener("change", (e) => {
+          const id = e.target.getAttribute("data-doc-id");
+          const target = state.docs.find((d) => d.id === id);
+          if (!target) return;
+          target.status = e.target.value;
+          saveState(true);
+          renderDocs();
+        });
+      });
+    }
+
+    function renderChats() {
+      if (!state.chats.length) {
+        chatLogEl.innerHTML = `<div class="small">대화가 없습니다.</div>`;
+        return;
+      }
+
+      chatLogEl.innerHTML = state.chats
+        .map((c) => `
+          <div class="msg">
+            <div class="msg-head">
+              <span>${escapeHtml(c.author)}</span>
+              <span>${dateTimeText(c.createdAt)}</span>
+            </div>
+            <div class="msg-body">${escapeHtml(c.message)}</div>
+          </div>
+        `)
+        .join("");
+
+      chatLogEl.scrollTop = chatLogEl.scrollHeight;
+    }
+
+    function syncFromOutside(nextState) {
+      state = {
+        docs: Array.isArray(nextState.docs) ? nextState.docs : [],
+        chats: Array.isArray(nextState.chats) ? nextState.chats : []
+      };
+      renderDocs();
+      renderChats();
+    }
+
+    document.getElementById("addDocBtn").addEventListener("click", () => {
+      const author = reviewerNameEl.value.trim() || "익명";
+      const company = companyNameEl.value.trim();
+      const title = docTitleEl.value.trim();
+
+      if (!company || !title) {
+        alert("업체명과 자료명은 필수입니다.");
+        return;
+      }
+
+      state.docs.push({
+        id: `doc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        company,
+        title,
+        type: docTypeEl.value,
+        docDate: docDateEl.value || "-",
+        link: docLinkEl.value.trim(),
+        note: docNoteEl.value.trim(),
+        status: "검토대기",
+        author,
+        createdAt: new Date().toISOString()
+      });
+
+      saveState(true);
+      renderDocs();
+
+      docTitleEl.value = "";
+      docLinkEl.value = "";
+      docNoteEl.value = "";
+    });
+
+    document.getElementById("clearDocsBtn").addEventListener("click", () => {
+      if (!confirm("자료 목록을 모두 초기화할까요?")) return;
+      state.docs = [];
+      saveState(true);
+      renderDocs();
+    });
+
+    document.getElementById("sendMsgBtn").addEventListener("click", () => {
+      const author = reviewerNameEl.value.trim() || "익명";
+      const message = chatInputEl.value.trim();
+      if (!message) return;
+
+      state.chats.push({
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        author,
+        message,
+        createdAt: new Date().toISOString()
+      });
+
+      saveState(true);
+      renderChats();
+      chatInputEl.value = "";
+      chatInputEl.focus();
+    });
+
+    document.getElementById("clearChatBtn").addEventListener("click", () => {
+      if (!confirm("대화를 모두 초기화할까요?")) return;
+      state.chats = [];
+      saveState(true);
+      renderChats();
+    });
+
+    chatInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById("sendMsgBtn").click();
+      }
+    });
+
+    if (channel) {
+      channel.onmessage = (event) => {
+        if (!event.data || event.data.type !== "state_sync") return;
+        syncFromOutside(event.data.payload);
+      };
+    }
+
+    window.addEventListener("storage", (event) => {
+      if (event.key !== STORAGE_KEY || !event.newValue) return;
+      try {
+        const parsed = JSON.parse(event.newValue);
+        syncFromOutside(parsed);
+      } catch {
+        // ignore parse errors
+      }
+    });
+
+    renderDocs();
+    renderChats();
+  </script>
+</body>
+</html>
