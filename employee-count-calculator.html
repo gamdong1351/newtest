@@ -1,0 +1,414 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상시근로자수(5인 기준) 계산기</title>
+  <style>
+    :root {
+      --bg1: #f7fbff;
+      --bg2: #ecf4ff;
+      --panel: #ffffff;
+      --line: #d7dfeb;
+      --text: #1f2937;
+      --sub: #5f6b7a;
+      --accent: #0a56d6;
+      --accent-soft: #e7efff;
+      --ok-bg: #dcfce7;
+      --ok-tx: #166534;
+      --warn-bg: #fef3c7;
+      --warn-tx: #92400e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      background: linear-gradient(145deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid #e6ebf3;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .head {
+      background: linear-gradient(120deg, #0a56d6, #2985ff);
+      color: white;
+      padding: 22px;
+    }
+
+    .head h1 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+    }
+
+    .head p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      opacity: 0.96;
+    }
+
+    .content {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .section {
+      border: 1px solid #e9edf4;
+      border-radius: 12px;
+      padding: 14px;
+      background: white;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.03rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input, select, button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: white;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover { filter: brightness(1.03); }
+
+    .hint {
+      margin: 8px 0 0;
+      color: var(--sub);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid #e5eaf2;
+      border-radius: 10px;
+      max-height: 360px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid #edf1f7;
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f8fbff;
+      z-index: 1;
+      font-size: 0.82rem;
+      color: #3d4d62;
+    }
+
+    .mini {
+      width: 82px;
+    }
+
+    .result {
+      background: var(--accent-soft);
+      border: 1px solid #cadaff;
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #bfd3ff;
+      padding-bottom: 6px;
+      gap: 8px;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .row strong {
+      color: #0b419f;
+      font-size: 1.05rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .badge.ok { background: var(--ok-bg); color: var(--ok-tx); border: 1px solid #bbf7d0; }
+    .badge.warn { background: var(--warn-bg); color: var(--warn-tx); border: 1px solid #fde68a; }
+
+    .small {
+      font-size: 0.82rem;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="head">
+      <h1>상시근로자수 계산기 (5인/10인 기준)</h1>
+      <p>근로기준법 시행령 제7조의2 방식(산정기간 1개월, 연인원/가동일수, 일수 보정)을 반영한 계산기입니다.</p>
+    </section>
+
+    <section class="content">
+      <section class="section">
+        <h2>1) 기준 설정</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="eventDate">법 적용 사유 발생일</label>
+            <input id="eventDate" type="date" />
+          </div>
+          <div class="field">
+            <label for="threshold">판단 기준</label>
+            <select id="threshold">
+              <option value="5">5인 기준 (일반)</option>
+              <option value="10">10인 기준 (취업규칙 등)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="makePeriod" type="button">산정기간 자동 생성</button>
+          </div>
+        </div>
+        <p class="hint">산정기간: 사유 발생일 전 1개월(사업 성립 후 1개월 미만이면 성립일부터). 아래 일자별로 가동 여부와 근로자 수를 입력하세요.</p>
+      </section>
+
+      <section class="section">
+        <h2>2) 일자별 입력</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>날짜</th>
+                <th>요일</th>
+                <th>가동일</th>
+                <th>해당일 사용 근로자 수</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <p class="hint">대법원 2023.6.15. 선고 2020도16228 취지에 따라 실제 근무 없는 주휴일은 보통 가동일에서 제외해 입력합니다.</p>
+      </section>
+
+      <section class="result" aria-live="polite">
+        <div class="row"><span>산정기간 가동일수</span><strong id="opDays">0일</strong></div>
+        <div class="row"><span>연인원(합계)</span><strong id="personDays">0명일</strong></div>
+        <div class="row"><span>평균 근로자 수 (연인원/가동일수)</span><strong id="avgCount">0.00명</strong></div>
+        <div class="row"><span>기준 미달 일수</span><strong id="belowDays">0일</strong></div>
+        <div class="row"><span>최종 판정</span><strong id="finalText">-</strong></div>
+        <div id="badge"></div>
+      </section>
+
+      <section class="section">
+        <h2>3) 계산 법칙 요약</h2>
+        <div class="small">
+          1. 1차 산정: 연인원 ÷ 가동일수.<br>
+          2. 2차 보정(시행령 제7조의2 제2항):<br>
+          - 평균이 기준 미만이어도, 기준 미달 일수가 가동일수의 1/2 미만이면 기준 이상으로 봄.<br>
+          - 평균이 기준 이상이어도, 기준 미달 일수가 가동일수의 1/2 이상이면 기준 미만으로 봄.<br>
+          3. 포함/제외(시행령 제7조의2 제4항): 파견근로자는 제외, 고용형태 불문 근로자는 포함.<br>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>법령/판례 출처</h2>
+        <div class="small">
+          - 근로기준법 시행령 제7조의2: https://www.law.go.kr/LSW/lumLsLinkPop.do?chrClsCd=010202&lspttninfSeq=70859<br>
+          - 대법원 2023.6.15. 선고 2020도16228: https://law.go.kr/LSW/precInfoP.do?mode=0&precSeq=235109
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+
+    const eventDateEl = document.getElementById("eventDate");
+    const thresholdEl = document.getElementById("threshold");
+    const tbody = document.getElementById("tbody");
+
+    const fmt = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+
+    function formatDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function setDefaultDate() {
+      const today = new Date();
+      eventDateEl.value = formatDate(today);
+    }
+
+    function buildPeriod() {
+      const eventDate = eventDateEl.value ? new Date(eventDateEl.value) : new Date();
+      const end = new Date(eventDate);
+      end.setDate(end.getDate() - 1);
+
+      const start = new Date(eventDate);
+      start.setMonth(start.getMonth() - 1);
+
+      tbody.innerHTML = "";
+      const cur = new Date(start);
+
+      while (cur <= end) {
+        const tr = document.createElement("tr");
+
+        const dateCell = document.createElement("td");
+        dateCell.textContent = formatDate(cur);
+
+        const dayCell = document.createElement("td");
+        dayCell.textContent = dayNames[cur.getDay()];
+
+        const opCell = document.createElement("td");
+        const opInput = document.createElement("input");
+        opInput.type = "checkbox";
+        opInput.checked = cur.getDay() !== 0;
+        opInput.addEventListener("change", calculate);
+        opCell.appendChild(opInput);
+
+        const countCell = document.createElement("td");
+        const countInput = document.createElement("input");
+        countInput.type = "number";
+        countInput.min = "0";
+        countInput.step = "1";
+        countInput.value = cur.getDay() === 0 ? "0" : "5";
+        countInput.className = "mini";
+        countInput.addEventListener("input", calculate);
+        countCell.appendChild(countInput);
+
+        const noteCell = document.createElement("td");
+        noteCell.textContent = cur.getDay() === 0 ? "주휴/휴무(예시)" : "";
+
+        tr.appendChild(dateCell);
+        tr.appendChild(dayCell);
+        tr.appendChild(opCell);
+        tr.appendChild(countCell);
+        tr.appendChild(noteCell);
+        tbody.appendChild(tr);
+
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      calculate();
+    }
+
+    function calculate() {
+      const threshold = Number(thresholdEl.value);
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+
+      let opDays = 0;
+      let personDays = 0;
+      let belowDays = 0;
+
+      rows.forEach((row) => {
+        const op = row.children[2].querySelector("input").checked;
+        const count = Math.max(0, Number(row.children[3].querySelector("input").value) || 0);
+
+        if (!op) return;
+
+        opDays += 1;
+        personDays += count;
+        if (count < threshold) belowDays += 1;
+      });
+
+      const avg = opDays > 0 ? personDays / opDays : 0;
+      const firstPass = avg >= threshold;
+      const belowHalf = opDays > 0 ? (belowDays < opDays / 2) : false;
+
+      let finalApplied;
+      let reason;
+
+      if (!firstPass && belowHalf) {
+        finalApplied = true;
+        reason = "평균은 기준 미만이나, 기준 미달 일수가 절반 미만이어서 기준 이상으로 봄";
+      } else if (firstPass && !belowHalf) {
+        finalApplied = false;
+        reason = "평균은 기준 이상이나, 기준 미달 일수가 절반 이상이어서 기준 미만으로 봄";
+      } else {
+        finalApplied = firstPass;
+        reason = "평균 결과와 일수 보정 결과가 동일";
+      }
+
+      document.getElementById("opDays").textContent = `${opDays.toLocaleString("ko-KR")}일`;
+      document.getElementById("personDays").textContent = `${personDays.toLocaleString("ko-KR")}명일`;
+      document.getElementById("avgCount").textContent = `${fmt.format(avg)}명`;
+      document.getElementById("belowDays").textContent = `${belowDays.toLocaleString("ko-KR")}일`;
+
+      const finalText = finalApplied
+        ? `상시 ${threshold}인 이상 사업장`
+        : `상시 ${threshold}인 미만 사업장`;
+
+      document.getElementById("finalText").textContent = finalText;
+
+      const badge = document.getElementById("badge");
+      badge.innerHTML = finalApplied
+        ? `<span class="badge ok">적용: ${finalText}</span><div class="small">${reason}</div>`
+        : `<span class="badge warn">적용: ${finalText}</span><div class="small">${reason}</div>`;
+    }
+
+    document.getElementById("makePeriod").addEventListener("click", buildPeriod);
+    thresholdEl.addEventListener("change", calculate);
+
+    setDefaultDate();
+    buildPeriod();
+  </script>
+</body>
+</html>
