@@ -206,7 +206,7 @@
           <span class="badge" id="todoCount">미조치 0</span>
           <span class="badge" id="highOpenCount">고위험 미조치 0</span>
         </div>
-        <a class="back-btn" href="dispatch-user-company-checklist.html">파견사용업체 체크리스트 이동</a>
+        <a class="back-btn" href="dispatch-user-company-checklist.html">사용업체 체크리스트 이동</a>
         <button class="btn soft" id="resetBtn" type="button">체크 초기화</button>
         <button class="btn primary" id="printBtn" type="button">인쇄</button>
       </div>
@@ -220,6 +220,7 @@
               <th style="width:90px;">위험도</th>
               <th style="width:180px;">주요 위반 포인트</th>
               <th style="width:120px;">법령 근거</th>
+              <th style="width:170px;">벌칙·과태료 조항</th>
               <th style="width:190px;">확인 증빙</th>
               <th style="width:120px;">점검 상태</th>
               <th style="width:180px;">조치 메모</th>
@@ -240,21 +241,21 @@
     const STORAGE_KEY = "dispatch_violation_checklist_v1";
 
     const rows = [
-      { title: "파견사업 허가 유효성", risk: "high", point: "무허가 파견/허가만료 상태 운영", law: "파견법 제7조", evidence: "허가증, 갱신서류" },
-      { title: "파견대상 업무 적합성", risk: "high", point: "허용업무 외 파견 사용", law: "파견법 제5조", evidence: "직무기술서, 업무분장" },
-      { title: "파견금지 업무 사용 여부", risk: "high", point: "금지업무에 파견근로 투입", law: "파견법 제5조", evidence: "현장배치표, 공정도" },
-      { title: "위장도급(실질 지휘명령) 여부", risk: "high", point: "도급계약이나 실질은 파견", law: "파견법·판례", evidence: "지휘명령체계, 메신저지시" },
-      { title: "총 파견기간(2년) 관리", risk: "high", point: "동일업무 장기파견 2년 초과", law: "파견법 제6조", evidence: "근무이력, 투입기간표" },
-      { title: "직접고용의무 발생사유 점검", risk: "high", point: "의무 발생 후 직접고용 미이행", law: "파견법 제6조의2", evidence: "직접고용 통지/계약서" },
-      { title: "파견계약서 필수기재사항", risk: "medium", point: "업무·기간·근로조건 누락", law: "파견법 관련 규정", evidence: "파견계약서 원본" },
-      { title: "근로조건 서면명시/교부", risk: "medium", point: "임금·시간·휴일 명시 누락", law: "근로기준법 제17조", evidence: "근로계약서, 교부증" },
-      { title: "임금·연장·야간·휴일수당 지급", risk: "high", point: "가산수당 미지급/오지급", law: "근로기준법 제56조", evidence: "임금대장, 급여명세" },
-      { title: "연차휴가 및 수당 정산", risk: "medium", point: "연차부여·수당정산 누락", law: "근로기준법 제60조", evidence: "휴가대장, 정산내역" },
-      { title: "4대보험·퇴직급여 처리", risk: "medium", point: "가입누락/퇴직금 미정산", law: "각 개별법", evidence: "보험가입내역, 퇴직정산" },
-      { title: "차별적 처우 금지 준수", risk: "high", point: "동종업무 대비 불합리 차별", law: "파견법 차별금지", evidence: "임금비교표, 취업규칙" },
-      { title: "산업안전보건 조치", risk: "high", point: "안전교육·보호구·위험고지 미흡", law: "산안법", evidence: "교육일지, TBM기록" },
-      { title: "괴롭힘·성희롱 대응체계", risk: "medium", point: "신고/조사/조치 체계 부재", law: "근로기준법·남녀고용법", evidence: "규정, 조사기록" },
-      { title: "파견근로자 명부/기록 보존", risk: "low", point: "근태·배치·임금 기록 미보존", law: "근로기준법 제42조", evidence: "근태대장, 명부" }
+      { title: "파견사업 허가 유효성", risk: "high", point: "무허가 파견/허가만료 상태 운영", law: "파견법 제7조", penalty: "파견법 제43조·제46조", evidence: "허가증, 갱신서류" },
+      { title: "파견대상 업무 적합성", risk: "high", point: "허용업무 외 파견 사용", law: "파견법 제5조", penalty: "파견법 제43조·제46조", evidence: "직무기술서, 업무분장" },
+      { title: "파견금지 업무 사용 여부", risk: "high", point: "금지업무에 파견근로 투입", law: "파견법 제5조", penalty: "파견법 제43조·제46조", evidence: "현장배치표, 공정도" },
+      { title: "위장도급(실질 지휘명령) 여부", risk: "high", point: "도급계약이나 실질은 파견", law: "파견법·판례", penalty: "파견법 제43조·제46조", evidence: "지휘명령체계, 메신저지시" },
+      { title: "총 파견기간(2년) 관리", risk: "high", point: "동일업무 장기파견 2년 초과", law: "파견법 제6조", penalty: "파견법 제43조·제46조", evidence: "근무이력, 투입기간표" },
+      { title: "직접고용의무 발생사유 점검", risk: "high", point: "의무 발생 후 직접고용 미이행", law: "파견법 제6조의2", penalty: "파견법 제46조", evidence: "직접고용 통지/계약서" },
+      { title: "파견계약서 필수기재사항", risk: "medium", point: "업무·기간·근로조건 누락", law: "파견법 관련 규정", penalty: "파견법 제46조", evidence: "파견계약서 원본" },
+      { title: "근로조건 서면명시/교부", risk: "medium", point: "임금·시간·휴일 명시 누락", law: "근로기준법 제17조", penalty: "근기법 제114조", evidence: "근로계약서, 교부증" },
+      { title: "임금·연장·야간·휴일수당 지급", risk: "high", point: "가산수당 미지급/오지급", law: "근로기준법 제56조", penalty: "근기법 제109조", evidence: "임금대장, 급여명세" },
+      { title: "연차휴가 및 수당 정산", risk: "medium", point: "연차부여·수당정산 누락", law: "근로기준법 제60조", penalty: "근기법 제109조", evidence: "휴가대장, 정산내역" },
+      { title: "4대보험·퇴직급여 처리", risk: "medium", point: "가입누락/퇴직금 미정산", law: "각 개별법", penalty: "개별법 벌칙·과태료", evidence: "보험가입내역, 퇴직정산" },
+      { title: "차별적 처우 금지 준수", risk: "high", point: "동종업무 대비 불합리 차별", law: "파견법 차별금지", penalty: "파견법 제46조", evidence: "임금비교표, 취업규칙" },
+      { title: "산업안전보건 조치", risk: "high", point: "안전교육·보호구·위험고지 미흡", law: "산안법", penalty: "산안법 제167조~제175조", evidence: "교육일지, TBM기록" },
+      { title: "괴롭힘·성희롱 대응체계", risk: "medium", point: "신고/조사/조치 체계 부재", law: "근로기준법·남녀고용법", penalty: "근기법·남녀고용법 제재", evidence: "규정, 조사기록" },
+      { title: "파견근로자 명부/기록 보존", risk: "low", point: "근태·배치·임금 기록 미보존", law: "근로기준법 제42조", penalty: "근기법 제116조", evidence: "근태대장, 명부" }
     ];
 
     const bodyEl = document.getElementById("body");
@@ -300,6 +301,7 @@
           <td><span class="risk ${riskClass(r.risk)}">${riskText(r.risk)}</span></td>
           <td>${r.point}</td>
           <td>${r.law}</td>
+          <td>${r.penalty}</td>
           <td>${r.evidence}</td>
           <td>
             <select data-i="${i}" class="status">
