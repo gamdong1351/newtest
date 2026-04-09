@@ -220,8 +220,29 @@
       background: #fcfdff;
       display: grid;
       gap: 8px;
-      grid-template-rows: 1fr auto;
+      grid-template-rows: auto 1fr auto;
       min-height: 470px;
+    }
+
+    .participant-wrap {
+      border: 1px solid #e5ecf8;
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .participant-item {
+      border: 1px solid #e7edf8;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #fbfdff;
+      font-size: 0.82rem;
+      color: #34465f;
+      line-height: 1.35;
     }
 
     .chat-log {
@@ -341,6 +362,9 @@
         <h2>실시간 대화창</h2>
 
         <div class="chat-wrap">
+          <div class="small">대화 참여자 목록</div>
+          <div class="participant-wrap" id="participantList"></div>
+          <div class="small">지난 대화 전체 기록</div>
           <div class="chat-log" id="chatLog"></div>
 
           <div class="grid">
@@ -399,6 +423,7 @@
 
     const chatInputEl = document.getElementById("chatInput");
     const chatLogEl = document.getElementById("chatLog");
+    const participantListEl = document.getElementById("participantList");
 
     const now = new Date();
     docDateEl.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -471,8 +496,30 @@
     function renderChats() {
       if (!state.chats.length) {
         chatLogEl.innerHTML = `<div class="small">대화가 없습니다.</div>`;
+        participantListEl.innerHTML = `<div class="small">참여자가 없습니다.</div>`;
         return;
       }
+
+      const participantMap = new Map();
+      state.chats.forEach((c) => {
+        const prev = participantMap.get(c.author);
+        if (!prev) {
+          participantMap.set(c.author, { count: 1, lastAt: c.createdAt });
+        } else {
+          prev.count += 1;
+          prev.lastAt = c.createdAt;
+        }
+      });
+
+      participantListEl.innerHTML = Array.from(participantMap.entries())
+        .sort((a, b) => new Date(b[1].lastAt) - new Date(a[1].lastAt))
+        .map(([name, info]) => `
+          <div class="participant-item">
+            <strong>${escapeHtml(name)}</strong><br>
+            메시지 ${info.count}건 · 최근 참여 ${dateTimeText(info.lastAt)}
+          </div>
+        `)
+        .join("");
 
       chatLogEl.innerHTML = state.chats
         .map((c) => `
