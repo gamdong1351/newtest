@@ -1,0 +1,363 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교대제 근로시간·통상임금 계산기</title>
+  <style>
+    :root {
+      --bg1: #f7fbff;
+      --bg2: #ebf4ff;
+      --panel: #ffffff;
+      --line: #d7e2ef;
+      --text: #1f2937;
+      --sub: #5f6b7a;
+      --accent: #0a56d6;
+      --accent-soft: #e9f0ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      background: linear-gradient(145deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .back-wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0a4fc4;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid #e4ecf8;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
+      overflow: hidden;
+    }
+
+    .head {
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(120deg, #0a56d6, #2a89ff);
+    }
+
+    .head h1 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+    }
+
+    .head p {
+      margin: 0;
+      font-size: 0.92rem;
+      opacity: 0.96;
+      line-height: 1.5;
+    }
+
+    .content {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .section {
+      border: 1px solid #e9edf4;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.04rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input, select {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(10, 86, 214, 0.14);
+    }
+
+    .hint {
+      margin: 7px 0 0;
+      color: var(--sub);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .result {
+      background: var(--accent-soft);
+      border: 1px solid #cbdbff;
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      border-bottom: 1px dashed #bfd3ff;
+      padding-bottom: 6px;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .row strong {
+      color: #0b419f;
+      font-size: 1.07rem;
+    }
+
+    .small {
+      color: var(--sub);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="back-wrap">
+    <a class="back-btn" href="index.html">메인으로 돌아가기</a>
+  </div>
+
+  <main class="wrap">
+    <section class="head">
+      <h1>교대제 근로시간·통상임금 계산기</h1>
+      <p>교대 패턴(주간/야간/휴무) 기준으로 월 근로시간과 통상시급을 계산하고, 연장·야간·휴일수당을 함께 계산합니다.</p>
+    </section>
+
+    <section class="content">
+      <section class="section">
+        <h2>1) 교대 패턴 입력</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="dayShift">주간근무 일수 (한 사이클)</label>
+            <input id="dayShift" type="number" min="0" step="1" value="4" />
+          </div>
+          <div class="field">
+            <label for="nightShift">야간근무 일수 (한 사이클)</label>
+            <input id="nightShift" type="number" min="0" step="1" value="4" />
+          </div>
+          <div class="field">
+            <label for="offShift">휴무 일수 (한 사이클)</label>
+            <input id="offShift" type="number" min="0" step="1" value="2" />
+          </div>
+          <div class="field">
+            <label for="targetDays">월 산정일수</label>
+            <input id="targetDays" type="number" min="1" step="1" value="30" />
+          </div>
+          <div class="field">
+            <label for="dayHours">주간 1일 실근로시간</label>
+            <input id="dayHours" type="number" min="0" step="0.5" value="8" />
+          </div>
+          <div class="field">
+            <label for="nightHours">야간 1일 실근로시간</label>
+            <input id="nightHours" type="number" min="0" step="0.5" value="8" />
+          </div>
+          <div class="field">
+            <label for="nightPortion">야간근로 인정시간(야간 1일 중)</label>
+            <input id="nightPortion" type="number" min="0" step="0.5" value="6" />
+          </div>
+          <div class="field">
+            <label for="holidayHours">월 휴일근로시간</label>
+            <input id="holidayHours" type="number" min="0" step="0.5" value="0" />
+          </div>
+        </div>
+        <p class="hint">예: 4조2교대(4주간-4야간-2휴무)라면 4/4/2로 입력합니다. 월 산정일수는 해당 급여월의 캘린더 기준 일수로 맞춰주세요.</p>
+      </section>
+
+      <section class="section">
+        <h2>2) 통상임금 항목 입력 (월 기준)</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="basePay">기본급 (원)</label>
+            <input id="basePay" type="number" min="0" step="1000" value="2500000" />
+          </div>
+          <div class="field">
+            <label for="fixedAllowance">고정수당 합계 (원)</label>
+            <input id="fixedAllowance" type="number" min="0" step="1000" value="300000" />
+          </div>
+          <div class="field">
+            <label for="regularBonus">정기상여금 (1회, 원)</label>
+            <input id="regularBonus" type="number" min="0" step="1000" value="0" />
+          </div>
+          <div class="field">
+            <label for="bonusCycle">정기상여 지급주기</label>
+            <select id="bonusCycle">
+              <option value="1">매월</option>
+              <option value="3">분기</option>
+              <option value="6">반기</option>
+              <option value="12">연 1회</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="includeConditional">재직/근무일수 조건부 정기지급임금 산입</label>
+            <select id="includeConditional">
+              <option value="yes">포함</option>
+              <option value="no">제외</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="conditionalPay">재직/근무일수 조건부 임금 (원)</label>
+            <input id="conditionalPay" type="number" min="0" step="1000" value="0" />
+          </div>
+        </div>
+      </section>
+
+      <section class="result" aria-live="polite">
+        <div class="row"><span>월 총 근로시간(패턴 기준)</span><strong id="monthlyWorkHours">0시간</strong></div>
+        <div class="row"><span>월 야간근로시간(인정)</span><strong id="monthlyNightHours">0시간</strong></div>
+        <div class="row"><span>월 통상임금 산입액</span><strong id="ordinaryMonthly">0원</strong></div>
+        <div class="row"><span>통상시급</span><strong id="ordinaryHourly">0원</strong></div>
+        <div class="row"><span>연장근로수당(주40시간 초과분 가정)</span><strong id="overtimePay">0원</strong></div>
+        <div class="row"><span>야간근로수당</span><strong id="nightPay">0원</strong></div>
+        <div class="row"><span>휴일근로수당</span><strong id="holidayPay">0원</strong></div>
+        <div class="row"><span>가산수당 합계</span><strong id="totalPremium">0원</strong></div>
+      </section>
+
+      <section class="section">
+        <h2>3) 산정식</h2>
+        <div class="small" id="formulaText"></div>
+      </section>
+
+      <p class="small">참고: 실제 임금 산정은 단체협약/취업규칙/교대표 세부(휴게, 인수인계, 유급휴일 처리, 월력 기준)에 따라 달라질 수 있습니다. 본 계산기는 시뮬레이션용입니다.</p>
+    </section>
+  </main>
+
+  <script>
+    const inputIds = [
+      "dayShift", "nightShift", "offShift", "targetDays", "dayHours", "nightHours", "nightPortion", "holidayHours",
+      "basePay", "fixedAllowance", "regularBonus", "bonusCycle", "includeConditional", "conditionalPay"
+    ];
+
+    inputIds.forEach((id) => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", calculate);
+      el.addEventListener("change", calculate);
+    });
+
+    function n(id) {
+      const v = Number(document.getElementById(id).value);
+      return Number.isFinite(v) && v >= 0 ? v : 0;
+    }
+
+    function won(value) {
+      return `${Math.round(value).toLocaleString("ko-KR")}원`;
+    }
+
+    function hour(value) {
+      return `${value.toFixed(2)}시간`;
+    }
+
+    function calculate() {
+      const dayShift = n("dayShift");
+      const nightShift = n("nightShift");
+      const offShift = n("offShift");
+      const targetDays = Math.max(1, n("targetDays"));
+      const dayHours = n("dayHours");
+      const nightHours = n("nightHours");
+      const nightPortion = Math.min(n("nightPortion"), nightHours);
+      const holidayHours = n("holidayHours");
+
+      const basePay = n("basePay");
+      const fixedAllowance = n("fixedAllowance");
+      const regularBonus = n("regularBonus");
+      const bonusCycle = Math.max(1, n("bonusCycle"));
+      const includeConditional = document.getElementById("includeConditional").value === "yes";
+      const conditionalPay = n("conditionalPay");
+
+      const cycleDays = dayShift + nightShift + offShift;
+      const safeCycleDays = cycleDays > 0 ? cycleDays : 1;
+
+      const dayWorkDays = targetDays * (dayShift / safeCycleDays);
+      const nightWorkDays = targetDays * (nightShift / safeCycleDays);
+
+      const monthlyDayHours = dayWorkDays * dayHours;
+      const monthlyNightShiftHours = nightWorkDays * nightHours;
+      const monthlyWorkHours = monthlyDayHours + monthlyNightShiftHours;
+      const monthlyNightHours = nightWorkDays * nightPortion;
+
+      const regularBonusMonthly = regularBonus / bonusCycle;
+      const ordinaryMonthly = basePay + fixedAllowance + regularBonusMonthly + (includeConditional ? conditionalPay : 0);
+      const ordinaryHourly = monthlyWorkHours > 0 ? ordinaryMonthly / monthlyWorkHours : 0;
+
+      const weeksInMonth = targetDays / 7;
+      const legalMonthlyHours = 40 * weeksInMonth;
+      const overtimeHours = Math.max(0, monthlyWorkHours - legalMonthlyHours);
+
+      const overtimePay = overtimeHours * ordinaryHourly * 1.5;
+      const nightPay = monthlyNightHours * ordinaryHourly * 0.5;
+      const holidayPay = holidayHours * ordinaryHourly * 1.5;
+      const totalPremium = overtimePay + nightPay + holidayPay;
+
+      document.getElementById("monthlyWorkHours").textContent = hour(monthlyWorkHours);
+      document.getElementById("monthlyNightHours").textContent = hour(monthlyNightHours);
+      document.getElementById("ordinaryMonthly").textContent = won(ordinaryMonthly);
+      document.getElementById("ordinaryHourly").textContent = won(ordinaryHourly);
+      document.getElementById("overtimePay").textContent = won(overtimePay);
+      document.getElementById("nightPay").textContent = won(nightPay);
+      document.getElementById("holidayPay").textContent = won(holidayPay);
+      document.getElementById("totalPremium").textContent = won(totalPremium);
+
+      document.getElementById("formulaText").innerHTML = [
+        `1) 월 근로시간 = (월 주간근무일수 × 주간 1일 시간) + (월 야간근무일수 × 야간 1일 시간)`,
+        `= (${targetDays} × ${dayShift}/${safeCycleDays} × ${dayHours}) + (${targetDays} × ${nightShift}/${safeCycleDays} × ${nightHours}) = ${hour(monthlyWorkHours)}`,
+        `2) 통상시급 = 월 통상임금 산입액 ÷ 월 근로시간 = ${won(ordinaryMonthly)} ÷ ${hour(monthlyWorkHours)} = ${won(ordinaryHourly)}`,
+        `3) 연장근로시간(단순가정) = 월 근로시간 - (주40시간 × 월 주수) = ${hour(overtimeHours)}`,
+        `4) 야간근로수당 = 야간근로시간 × 통상시급 × 0.5 = ${won(nightPay)}`,
+        `5) 휴일근로수당 = 휴일근로시간 × 통상시급 × 1.5 = ${won(holidayPay)}`
+      ].join("<br>");
+    }
+
+    calculate();
+  </script>
+</body>
+</html>
