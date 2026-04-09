@@ -1,0 +1,352 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교대제 유형별 근로시간 계산기</title>
+  <style>
+    :root {
+      --bg1: #f7fbff;
+      --bg2: #ebf4ff;
+      --panel: #ffffff;
+      --line: #d7e2ef;
+      --text: #1f2937;
+      --sub: #5f6b7a;
+      --accent: #0a56d6;
+      --accent-soft: #e9f0ff;
+      --ok: #166534;
+      --ok-bg: #dcfce7;
+      --warn: #92400e;
+      --warn-bg: #fef3c7;
+      --bad: #991b1b;
+      --bad-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      background: linear-gradient(145deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .back-wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0a4fc4;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .wrap {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      border: 1px solid #e4ecf8;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
+      overflow: hidden;
+    }
+
+    .head {
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(120deg, #0a56d6, #2a89ff);
+    }
+
+    .head h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    .head p {
+      margin: 0;
+      opacity: 0.96;
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .content {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .section {
+      border: 1px solid #e8edf5;
+      border-radius: 12px;
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 1.03rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.93rem;
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(10, 86, 214, 0.14);
+    }
+
+    .result {
+      background: var(--accent-soft);
+      border: 1px solid #cbdbff;
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      border-bottom: 1px dashed #bfd3ff;
+      padding-bottom: 6px;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .row strong {
+      font-size: 1.05rem;
+      color: #0b419f;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .badge.ok { color: var(--ok); background: var(--ok-bg); border-color: #bbf7d0; }
+    .badge.warn { color: var(--warn); background: var(--warn-bg); border-color: #fde68a; }
+    .badge.bad { color: var(--bad); background: var(--bad-bg); border-color: #fecaca; }
+
+    .small {
+      font-size: 0.82rem;
+      color: var(--sub);
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="back-wrap">
+    <a class="back-btn" href="index.html">메인으로 돌아가기</a>
+  </div>
+
+  <main class="wrap">
+    <section class="head">
+      <h1>교대제 유형별 근로시간 계산기</h1>
+      <p>교대유형을 선택하면 기본값이 자동 입력됩니다. 필요 시 수치를 수정해 월/주 평균 근로시간과 초과 위험을 확인하세요.</p>
+    </section>
+
+    <section class="content">
+      <section class="section">
+        <h2>1) 교대유형 선택</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="shiftType">유형</label>
+            <select id="shiftType">
+              <option value="4x2">4조2교대 (4주간-4야간-2휴무, 12h)</option>
+              <option value="3x2">3조2교대 (2주간-2야간-2휴무, 12h)</option>
+              <option value="3x3">3조3교대 (주간/저녁/야간 순환, 8h)</option>
+              <option value="daynight">주야2교대 (주간5-야간5-휴무2)</option>
+              <option value="custom">직접입력</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="monthDays">월 산정일수</label>
+            <input id="monthDays" type="number" min="1" step="1" value="30" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>2) 사이클 상세 입력</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="dayCnt">사이클 내 주간근무 일수</label>
+            <input id="dayCnt" type="number" min="0" step="1" value="4" />
+          </div>
+          <div class="field">
+            <label for="eveCnt">사이클 내 저녁근무 일수</label>
+            <input id="eveCnt" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="field">
+            <label for="nightCnt">사이클 내 야간근무 일수</label>
+            <input id="nightCnt" type="number" min="0" step="1" value="4" />
+          </div>
+          <div class="field">
+            <label for="offCnt">사이클 내 휴무 일수</label>
+            <input id="offCnt" type="number" min="0" step="1" value="2" />
+          </div>
+          <div class="field">
+            <label for="dayHours">주간 1일 근로시간</label>
+            <input id="dayHours" type="number" min="0" step="0.5" value="12" />
+          </div>
+          <div class="field">
+            <label for="eveHours">저녁 1일 근로시간</label>
+            <input id="eveHours" type="number" min="0" step="0.5" value="0" />
+          </div>
+          <div class="field">
+            <label for="nightHours">야간 1일 근로시간</label>
+            <input id="nightHours" type="number" min="0" step="0.5" value="12" />
+          </div>
+          <div class="field">
+            <label for="nightPortion">야간가산 인정시간(야간 1일 중)</label>
+            <input id="nightPortion" type="number" min="0" step="0.5" value="6" />
+          </div>
+        </div>
+      </section>
+
+      <section class="result" aria-live="polite">
+        <div class="row"><span>사이클 총 일수</span><strong id="cycleDays">0일</strong></div>
+        <div class="row"><span>사이클 총 근로시간</span><strong id="cycleHours">0시간</strong></div>
+        <div class="row"><span>월 예상 총 근로시간</span><strong id="monthHours">0시간</strong></div>
+        <div class="row"><span>주 평균 근로시간</span><strong id="weekAvg">0시간</strong></div>
+        <div class="row"><span>월 예상 야간시간(가산기준)</span><strong id="monthNight">0시간</strong></div>
+        <div class="row"><span>주52시간 기준 판정</span><strong id="limitStatus">-</strong></div>
+        <div class="small" id="formula"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const presets = {
+      "4x2": { dayCnt: 4, eveCnt: 0, nightCnt: 4, offCnt: 2, dayHours: 12, eveHours: 0, nightHours: 12, nightPortion: 6 },
+      "3x2": { dayCnt: 2, eveCnt: 0, nightCnt: 2, offCnt: 2, dayHours: 12, eveHours: 0, nightHours: 12, nightPortion: 6 },
+      "3x3": { dayCnt: 2, eveCnt: 2, nightCnt: 2, offCnt: 2, dayHours: 8, eveHours: 8, nightHours: 8, nightPortion: 6 },
+      "daynight": { dayCnt: 5, eveCnt: 0, nightCnt: 5, offCnt: 2, dayHours: 8, eveHours: 0, nightHours: 8, nightPortion: 6 }
+    };
+
+    const ids = [
+      "shiftType", "monthDays",
+      "dayCnt", "eveCnt", "nightCnt", "offCnt",
+      "dayHours", "eveHours", "nightHours", "nightPortion"
+    ];
+
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", calculate);
+      el.addEventListener("change", calculate);
+    });
+
+    document.getElementById("shiftType").addEventListener("change", (e) => {
+      const key = e.target.value;
+      if (key !== "custom" && presets[key]) {
+        const p = presets[key];
+        document.getElementById("dayCnt").value = p.dayCnt;
+        document.getElementById("eveCnt").value = p.eveCnt;
+        document.getElementById("nightCnt").value = p.nightCnt;
+        document.getElementById("offCnt").value = p.offCnt;
+        document.getElementById("dayHours").value = p.dayHours;
+        document.getElementById("eveHours").value = p.eveHours;
+        document.getElementById("nightHours").value = p.nightHours;
+        document.getElementById("nightPortion").value = p.nightPortion;
+      }
+      calculate();
+    });
+
+    function n(id) {
+      const v = Number(document.getElementById(id).value);
+      return Number.isFinite(v) && v >= 0 ? v : 0;
+    }
+
+    function h(v) {
+      return `${v.toFixed(2)}시간`;
+    }
+
+    function calculate() {
+      const monthDays = Math.max(1, n("monthDays"));
+      const dayCnt = n("dayCnt");
+      const eveCnt = n("eveCnt");
+      const nightCnt = n("nightCnt");
+      const offCnt = n("offCnt");
+      const dayHours = n("dayHours");
+      const eveHours = n("eveHours");
+      const nightHours = n("nightHours");
+      const nightPortion = Math.min(n("nightPortion"), nightHours);
+
+      const cycleDays = dayCnt + eveCnt + nightCnt + offCnt;
+      const safeCycleDays = cycleDays > 0 ? cycleDays : 1;
+
+      const cycleHours = dayCnt * dayHours + eveCnt * eveHours + nightCnt * nightHours;
+      const monthHours = cycleHours * (monthDays / safeCycleDays);
+      const weekAvg = monthHours / (monthDays / 7);
+      const monthNight = nightCnt * nightPortion * (monthDays / safeCycleDays);
+
+      document.getElementById("cycleDays").textContent = `${cycleDays.toFixed(0)}일`;
+      document.getElementById("cycleHours").textContent = h(cycleHours);
+      document.getElementById("monthHours").textContent = h(monthHours);
+      document.getElementById("weekAvg").textContent = h(weekAvg);
+      document.getElementById("monthNight").textContent = h(monthNight);
+
+      const statusEl = document.getElementById("limitStatus");
+      if (weekAvg > 52) {
+        statusEl.innerHTML = `<span class="badge bad">52시간 초과 위험</span>`;
+      } else if (weekAvg > 48) {
+        statusEl.innerHTML = `<span class="badge warn">52시간 근접</span>`;
+      } else {
+        statusEl.innerHTML = `<span class="badge ok">운영 가능 범위</span>`;
+      }
+
+      document.getElementById("formula").innerHTML = [
+        `월 예상 총 근로시간 = 사이클 총 근로시간 × (월일수 ÷ 사이클일수)`,
+        `= ${h(cycleHours)} × (${monthDays} ÷ ${safeCycleDays}) = ${h(monthHours)}`,
+        `주 평균 근로시간 = 월 근로시간 ÷ (월일수 ÷ 7) = ${h(weekAvg)}`,
+        `월 예상 야간시간 = (사이클 내 야간일수 × 야간가산 인정시간) × (월일수 ÷ 사이클일수) = ${h(monthNight)}`
+      ].join("<br>");
+    }
+
+    calculate();
+  </script>
+</body>
+</html>
