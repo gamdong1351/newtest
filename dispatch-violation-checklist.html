@@ -1,0 +1,374 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>파견업체 위반사항 체크리스트</title>
+  <style>
+    :root {
+      --bg1: #f8fbff;
+      --bg2: #edf5ff;
+      --panel: #ffffff;
+      --line: #d9e3f0;
+      --text: #1f2937;
+      --sub: #5f6b7a;
+      --primary: #0a56d6;
+      --primary2: #2b86ff;
+      --high: #b91c1c;
+      --high-bg: #fee2e2;
+      --med: #92400e;
+      --med-bg: #fef3c7;
+      --low: #166534;
+      --low-bg: #dcfce7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background: linear-gradient(145deg, var(--bg1), var(--bg2));
+      padding: 20px;
+    }
+
+    .back-wrap {
+      width: min(1200px, 100%);
+      margin: 0 auto 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0a4fc4;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .wrap {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      border: 1px solid #e5ecf8;
+      border-radius: 16px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
+    }
+
+    .head {
+      padding: 22px;
+      color: #fff;
+      background: linear-gradient(120deg, var(--primary), var(--primary2));
+    }
+
+    .head h1 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+    }
+
+    .head p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      opacity: 0.96;
+    }
+
+    .content {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .toolbar {
+      border: 1px solid #e8edf5;
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr auto auto auto;
+      align-items: center;
+    }
+
+    .info {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid #d3deed;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: #f6f9ff;
+      color: #375176;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn.primary { background: var(--primary); color: #fff; }
+    .btn.soft { background: #eef4ff; color: #2c4770; border: 1px solid #c7d8fb; }
+
+    .table-wrap {
+      border: 1px solid #e6edf7;
+      border-radius: 12px;
+      overflow: auto;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid #edf2f8;
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f8fbff;
+      z-index: 1;
+      font-size: 0.82rem;
+      color: #3f5170;
+    }
+
+    .risk {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .risk.high { color: var(--high); background: var(--high-bg); border-color: #fecaca; }
+    .risk.medium { color: var(--med); background: var(--med-bg); border-color: #fde68a; }
+    .risk.low { color: var(--low); background: var(--low-bg); border-color: #bbf7d0; }
+
+    select, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.86rem;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    .small {
+      color: var(--sub);
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 920px) {
+      .toolbar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="back-wrap">
+    <a class="back-btn" href="index.html">메인으로 돌아가기</a>
+  </div>
+
+  <main class="wrap">
+    <section class="head">
+      <h1>파견업체 위반사항 체크리스트</h1>
+      <p>파견사업주/사용사업주 점검 항목을 한 번에 관리하는 실무용 체크리스트입니다. 항목 상태를 저장해 재점검할 수 있습니다.</p>
+    </section>
+
+    <section class="content">
+      <div class="toolbar">
+        <div class="info">
+          <span class="badge" id="doneCount">완료 0</span>
+          <span class="badge" id="todoCount">미조치 0</span>
+          <span class="badge" id="highOpenCount">고위험 미조치 0</span>
+        </div>
+        <a class="back-btn" href="dispatch-user-company-checklist.html">파견사용업체 체크리스트 이동</a>
+        <button class="btn soft" id="resetBtn" type="button">체크 초기화</button>
+        <button class="btn primary" id="printBtn" type="button">인쇄</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">No</th>
+              <th style="width:250px;">점검 항목</th>
+              <th style="width:90px;">위험도</th>
+              <th style="width:180px;">주요 위반 포인트</th>
+              <th style="width:120px;">법령 근거</th>
+              <th style="width:190px;">확인 증빙</th>
+              <th style="width:120px;">점검 상태</th>
+              <th style="width:180px;">조치 메모</th>
+            </tr>
+          </thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+
+      <p class="small">
+        참고 근거: 파견근로자보호 등에 관한 법률 제5조(파견대상·금지업무), 제6조(파견기간), 제6조의2(직접고용의무), 제7조(허가) 등.<br>
+        법령/해석 변경 가능성이 있으므로 최종 제재 판단은 최신 법령 원문 및 노무·법무 검토를 병행하세요.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "dispatch_violation_checklist_v1";
+
+    const rows = [
+      { title: "파견사업 허가 유효성", risk: "high", point: "무허가 파견/허가만료 상태 운영", law: "파견법 제7조", evidence: "허가증, 갱신서류" },
+      { title: "파견대상 업무 적합성", risk: "high", point: "허용업무 외 파견 사용", law: "파견법 제5조", evidence: "직무기술서, 업무분장" },
+      { title: "파견금지 업무 사용 여부", risk: "high", point: "금지업무에 파견근로 투입", law: "파견법 제5조", evidence: "현장배치표, 공정도" },
+      { title: "위장도급(실질 지휘명령) 여부", risk: "high", point: "도급계약이나 실질은 파견", law: "파견법·판례", evidence: "지휘명령체계, 메신저지시" },
+      { title: "총 파견기간(2년) 관리", risk: "high", point: "동일업무 장기파견 2년 초과", law: "파견법 제6조", evidence: "근무이력, 투입기간표" },
+      { title: "직접고용의무 발생사유 점검", risk: "high", point: "의무 발생 후 직접고용 미이행", law: "파견법 제6조의2", evidence: "직접고용 통지/계약서" },
+      { title: "파견계약서 필수기재사항", risk: "medium", point: "업무·기간·근로조건 누락", law: "파견법 관련 규정", evidence: "파견계약서 원본" },
+      { title: "근로조건 서면명시/교부", risk: "medium", point: "임금·시간·휴일 명시 누락", law: "근로기준법 제17조", evidence: "근로계약서, 교부증" },
+      { title: "임금·연장·야간·휴일수당 지급", risk: "high", point: "가산수당 미지급/오지급", law: "근로기준법 제56조", evidence: "임금대장, 급여명세" },
+      { title: "연차휴가 및 수당 정산", risk: "medium", point: "연차부여·수당정산 누락", law: "근로기준법 제60조", evidence: "휴가대장, 정산내역" },
+      { title: "4대보험·퇴직급여 처리", risk: "medium", point: "가입누락/퇴직금 미정산", law: "각 개별법", evidence: "보험가입내역, 퇴직정산" },
+      { title: "차별적 처우 금지 준수", risk: "high", point: "동종업무 대비 불합리 차별", law: "파견법 차별금지", evidence: "임금비교표, 취업규칙" },
+      { title: "산업안전보건 조치", risk: "high", point: "안전교육·보호구·위험고지 미흡", law: "산안법", evidence: "교육일지, TBM기록" },
+      { title: "괴롭힘·성희롱 대응체계", risk: "medium", point: "신고/조사/조치 체계 부재", law: "근로기준법·남녀고용법", evidence: "규정, 조사기록" },
+      { title: "파견근로자 명부/기록 보존", risk: "low", point: "근태·배치·임금 기록 미보존", law: "근로기준법 제42조", evidence: "근태대장, 명부" }
+    ];
+
+    const bodyEl = document.getElementById("body");
+    const doneCountEl = document.getElementById("doneCount");
+    const todoCountEl = document.getElementById("todoCount");
+    const highOpenCountEl = document.getElementById("highOpenCount");
+
+    const state = loadState();
+
+    function loadState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        return {
+          status: Array.isArray(parsed.status) ? parsed.status : Array(rows.length).fill("미조치"),
+          memo: Array.isArray(parsed.memo) ? parsed.memo : Array(rows.length).fill("")
+        };
+      } catch {
+        return { status: Array(rows.length).fill("미조치"), memo: Array(rows.length).fill("") };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function riskClass(risk) {
+      if (risk === "high") return "high";
+      if (risk === "medium") return "medium";
+      return "low";
+    }
+
+    function riskText(risk) {
+      if (risk === "high") return "고";
+      if (risk === "medium") return "중";
+      return "저";
+    }
+
+    function render() {
+      bodyEl.innerHTML = rows.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${r.title}</td>
+          <td><span class="risk ${riskClass(r.risk)}">${riskText(r.risk)}</span></td>
+          <td>${r.point}</td>
+          <td>${r.law}</td>
+          <td>${r.evidence}</td>
+          <td>
+            <select data-i="${i}" class="status">
+              <option value="미조치" ${state.status[i] === "미조치" ? "selected" : ""}>미조치</option>
+              <option value="점검중" ${state.status[i] === "점검중" ? "selected" : ""}>점검중</option>
+              <option value="조치완료" ${state.status[i] === "조치완료" ? "selected" : ""}>조치완료</option>
+            </select>
+          </td>
+          <td><input type="text" data-i="${i}" class="memo" value="${escapeHtml(state.memo[i] || "")}" placeholder="조치내용/기한/담당자" /></td>
+        </tr>
+      `).join("");
+
+      bindEvents();
+      refreshSummary();
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function bindEvents() {
+      bodyEl.querySelectorAll(".status").forEach((el) => {
+        el.addEventListener("change", (e) => {
+          const i = Number(e.target.dataset.i);
+          state.status[i] = e.target.value;
+          saveState();
+          refreshSummary();
+        });
+      });
+
+      bodyEl.querySelectorAll(".memo").forEach((el) => {
+        el.addEventListener("input", (e) => {
+          const i = Number(e.target.dataset.i);
+          state.memo[i] = e.target.value;
+          saveState();
+        });
+      });
+    }
+
+    function refreshSummary() {
+      const done = state.status.filter((s) => s === "조치완료").length;
+      const todo = state.status.filter((s) => s !== "조치완료").length;
+      let highOpen = 0;
+
+      rows.forEach((r, i) => {
+        if (r.risk === "high" && state.status[i] !== "조치완료") highOpen += 1;
+      });
+
+      doneCountEl.textContent = `완료 ${done}`;
+      todoCountEl.textContent = `미조치 ${todo}`;
+      highOpenCountEl.textContent = `고위험 미조치 ${highOpen}`;
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("체크리스트 상태와 메모를 초기화할까요?")) return;
+      state.status = Array(rows.length).fill("미조치");
+      state.memo = Array(rows.length).fill("");
+      saveState();
+      render();
+    });
+
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    render();
+  </script>
+</body>
+</html>
