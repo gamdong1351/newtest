@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>근로 계산기 메인</title>
+  <title>파견·사용업체 체크리스트 선택</title>
   <style>
     :root {
       --bg1: #f7fbff;
@@ -29,37 +29,51 @@
       background: linear-gradient(140deg, var(--bg1), var(--bg2));
     }
 
-    .card {
-      width: min(760px, 100%);
-      background: var(--panel);
+    .wrap {
+      width: min(780px, 100%);
       border: 1px solid #e6edf7;
-      border-radius: 18px;
-      box-shadow: 0 14px 30px rgba(2, 6, 23, 0.09);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.08);
       overflow: hidden;
     }
 
     .head {
-      padding: 24px;
-      color: white;
+      padding: 22px;
+      color: #fff;
       background: linear-gradient(120deg, var(--primary), var(--primary2));
     }
 
     .head h1 {
       margin: 0 0 8px;
-      font-size: 1.5rem;
+      font-size: 1.35rem;
     }
 
     .head p {
       margin: 0;
-      opacity: 0.95;
+      font-size: 0.92rem;
       line-height: 1.5;
-      font-size: 0.95rem;
+      opacity: 0.96;
     }
 
     .content {
-      padding: 22px;
+      padding: 18px;
       display: grid;
-      gap: 14px;
+      gap: 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      width: fit-content;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0a4fc4;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      padding: 6px 11px;
+      margin-bottom: 6px;
     }
 
     .nav-btn {
@@ -83,7 +97,7 @@
     .nav-btn strong {
       display: block;
       margin-bottom: 4px;
-      font-size: 1.03rem;
+      font-size: 1.02rem;
       color: #0a3f99;
     }
 
@@ -95,31 +109,20 @@
   </style>
 </head>
 <body>
-  <main class="card">
+  <main class="wrap">
     <section class="head">
-      <h1>근로 계산기 메인</h1>
-      <p>아래 버튼으로 원하는 계산기로 이동하세요.</p>
+      <h1>파견·사용업체 체크리스트</h1>
+      <p>아래에서 점검 대상을 선택하세요.</p>
     </section>
     <section class="content">
-      <a class="nav-btn" href="ordinary-wage-calculator.html">
-        <strong>통상임금 계산기</strong>
-        <span>최근 판례 반영 통상임금/가산수당 계산</span>
+      <a class="back-btn" href="index.html">메인으로 돌아가기</a>
+      <a class="nav-btn" href="dispatch-violation-checklist.html">
+        <strong>파견업체 위반사항 체크리스트</strong>
+        <span>파견사업주 관점 위반 리스크 점검</span>
       </a>
-      <a class="nav-btn" href="employee-count-calculator.html">
-        <strong>상시근로자수 계산기</strong>
-        <span>5인/10인 기준 상시근로자수 판단</span>
-      </a>
-      <a class="nav-btn" href="shift-worker-calculator.html">
-        <strong>교대제 근로시간·통상임금 계산기</strong>
-        <span>교대패턴 기준 근로시간, 통상시급, 가산수당 계산</span>
-      </a>
-      <a class="nav-btn" href="supervision-collab.html">
-        <strong>감독 협업 실시간 공유 페이지</strong>
-        <span>상대업체 제출자료 공유 보드 + 실시간 대화창</span>
-      </a>
-      <a class="nav-btn" href="dispatch-checklist-selector.html">
-        <strong>파견·사용업체 위반사항 체크리스트</strong>
-        <span>버튼 1개로 들어가서 파견업체/사용업체 점검표 선택</span>
+      <a class="nav-btn" href="dispatch-user-company-checklist.html">
+        <strong>사용업체 사업장 위반사항 체크리스트</strong>
+        <span>사용업체 관점 직접고용·차별·안전보건 점검</span>
       </a>
     </section>
   </main>
